@@ -27,19 +27,19 @@ result=$(ssh docker-manager docker service ls --filter name=${PROJECT_NAME} -q)
 
 if [[ -n "$result" ]]; then
   ssh docker-manager docker service update \
-    --label-add ingress=true \
+    --with-registry-auth \
     --label-add ingress.dnsname=${PROJECT_NAME}-api.dev.gettydata.com \
     --label-add ingress.targetport=${PROJECT_PORT} \
-    --force \
-    --detach=false
+    --force -q --detach=false \
     ${PROJECT_NAME}
 else
   ssh docker-manager docker service create \
+    --with-registry-auth \
     --name ${PROJECT_NAME} \
     --label ingress=true \
     --label ingress.dnsname=${PROJECT_NAME}-api.dev.gettydata.com \
     --label ingress.targetport=${PROJECT_PORT} \
     --network frontends \
-    --detach=false \
+    -q --detach=false \
     ${ECS_REPOSITORY}:${PROJECT_NAME}
 fi
