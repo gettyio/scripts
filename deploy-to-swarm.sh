@@ -30,6 +30,7 @@ if [[ -n "$result" ]]; then
     --with-registry-auth \
     --label-add ingress.dnsname=${PROJECT_NAME}-api.dev.gettydata.com \
     --label-add ingress.targetport=${PROJECT_PORT} \
+    --image ${ECS_REPOSITORY}:${PROJECT_NAME} \
     --force -q --detach=false \
     ${PROJECT_NAME}
 else
