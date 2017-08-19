@@ -19,14 +19,14 @@ eval $(aws ecr get-login --region us-east-1)
 docker tag ${PROJECT_NAME} ${ECS_REPOSITORY}:${PROJECT_NAME}
 docker push ${ECS_REPOSITORY}:${PROJECT_NAME}
 
-ssh docker-manager $(aws ecr get-login --no-include-email --region us-east-1)
+ssh -o "StrictHostKeyChecking no" docker-manager $(aws ecr get-login --no-include-email --region us-east-1)
 
 
 # Check if service is already running
-result=$(ssh docker-manager docker service ls --filter name=${PROJECT_NAME} -q)
+result=$(ssh -o "StrictHostKeyChecking no" docker-manager docker service ls --filter name=${PROJECT_NAME} -q)
 
 if [[ -n "$result" ]]; then
-  ssh docker-manager docker service update \
+  ssh -o "StrictHostKeyChecking no" docker-manager docker service update \
     --with-registry-auth \
     --label-add ingress.dnsname=${PROJECT_NAME}-api.dev.gettydata.com \
     --label-add ingress.targetport=${PROJECT_PORT} \
@@ -34,7 +34,7 @@ if [[ -n "$result" ]]; then
     --force -q --detach=false \
     ${PROJECT_NAME}
 else
-  ssh docker-manager docker service create \
+  ssh -o "StrictHostKeyChecking no" docker-manager docker service create \
     --with-registry-auth \
     --name ${PROJECT_NAME} \
     --label ingress=true \
