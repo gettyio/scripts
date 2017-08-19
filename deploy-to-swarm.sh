@@ -15,7 +15,7 @@ chmod 400 ~/.ssh/development.pem
 echo $DEV_CONFIG | base64 -d >> ~/.ssh/config
 
 docker build -t ${PROJECT_NAME} .
-eval $(aws ecr get-login --region us-east-1)
+eval $(aws ecr get-login --no-include-email --region us-east-1)
 docker tag ${PROJECT_NAME} ${ECS_REPOSITORY}:${PROJECT_NAME}
 docker push ${ECS_REPOSITORY}:${PROJECT_NAME}
 
